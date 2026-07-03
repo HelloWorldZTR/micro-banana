@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Generated Vocabulary 
+vocab*.json
+
+# VSCode Config
+.vscode/
