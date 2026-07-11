@@ -222,3 +222,6 @@ vocab*.json
 
 # VSCode Config
 .vscode/
+
+# output files
+output

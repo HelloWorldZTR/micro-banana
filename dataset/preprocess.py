@@ -56,7 +56,8 @@ def normalize(batch):
                 if temp:
                     sentence.append(temp.lower())
                     temp = ""
-                sentence.append(" ")
+                temp = " " 
+                # space will be placed at the begining of the next token
         if temp:
             sentence.append(temp.lower())
         
@@ -75,10 +76,19 @@ def pre_tokenize(batch):
                 if ch not in string.punctuation:
                     temp += ch
                 else:
-                    if temp:
-                        new_word.append(temp)
+                    # if ch is punctuation mark
+                    if temp == " ":
+                        # <space> + punctuation is a single token
+                        new_word.append(temp + ch)
                         temp = ""
-                    new_word.append(ch)
+                    elif temp:
+                        # other + punctuation is two tokens
+                        new_word.append(temp)
+                        new_word.append(ch)
+                        temp = ""
+                    else:
+                        # continous punctuation is two tokens
+                        new_word.append(ch)
             if temp:
                 new_word.append(temp)
             
@@ -142,7 +152,7 @@ if __name__ == "__main__":
     
     if not vocab_enc:
         print("Generating vocabulary...")
-        vocab = calculate_vocab(test_dataset, sample_batch=-1, maximum_vocab=16384)
+        vocab = calculate_vocab(test_dataset, sample_batch=-1, maximum_vocab=32_768)
         vocab_dec = {
             id:word for id, word in enumerate(vocab)
         }

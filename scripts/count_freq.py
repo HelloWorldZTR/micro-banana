@@ -1,3 +1,5 @@
+"""检查数据集中各个label的频率"""
+
 from typing import Iterator
 import numpy as np
 import torch
@@ -67,7 +69,13 @@ if __name__ == "__main__":
     train_loader = BananaLoader("train", config)
     enc, dec = load_vocab()
 
+    freq_counter = {}
+    cnt = 0
     for batch in train_loader:
+        cnt += 1
+        if cnt > 100:
+            break
+        print(f"batch {cnt}")
         X, Y = batch
         for i in range(config.batch_size):
             raw_x = []
@@ -81,12 +89,22 @@ if __name__ == "__main__":
                 raw_y.append(y)
                 sentence_x.append(dec[x])
                 sentence_y.append(dec[y])
-            print("Batch ", i)
-            print(repr("".join(sentence_x)))
-            print(repr("".join(sentence_y)))
-            print(" ".join(raw_x))
-            print(" ".join(raw_y))
+
+                freq_counter[x] = freq_counter.get(x, 0) + 1
+            # print("Batch ", i)
+            # print(repr("".join(sentence_x)))
+            # print(repr("".join(sentence_y)))
+            # print(" ".join(raw_x))
+            # print(" ".join(raw_y))
             # print(" ".join(mask[i, :]))
             # print()
-            input()
+            # input()
+
+    freq_sorted = sorted([(v, k) for k, v in freq_counter.items()], reverse=True)
+    freq_sorted = freq_sorted[:50]
+    totals = 0
+    for v, k in freq_sorted:
+        totals += v
+    for v, k in freq_sorted:
+        print(f"{k}({dec[k]}: {v/totals : .3f})")
 
